@@ -74,13 +74,13 @@ export default {
           'stateName': '认证中'
         },
         'userId': 1,
-        'userName': 'hujian',
+        'userName': 'yourname',
         'userAge': 123456,
         'userSex': '男',
         'password': '123456',
         'encryptedProblem': '123',
         'fanNum': null,
-        'userTel': '15566266626',
+        'userTel': '15566666626',
         'registerDate': '2021-04-17 15:17:10',
         'iconUrl': 'http://localhost:8081/user/getIcon/icon1.jpg',
         'stateId': 1
