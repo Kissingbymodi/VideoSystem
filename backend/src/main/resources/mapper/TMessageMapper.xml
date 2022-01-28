@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TMessageMapper">
+    <resultMap id="BaseResultMap" type="com.hu.video.entity.TMessage">
+        <id column="msg_id" jdbcType="BIGINT" property="msgId"/>
+        <result column="msg_title" jdbcType="VARCHAR" property="msgTitle"/>
+        <result column="msg_context" jdbcType="VARCHAR" property="msgContext"/>
+        <result column="msg_send_date" jdbcType="TIMESTAMP" property="msgSendDate"/>
+        <result column="msg_send_user_id" jdbcType="BIGINT" property="msgSendUserId"/>
+        <result column="msg_receive_user_id" jdbcType="BIGINT" property="msgReceiveUserId"/>
+        <result column="msg_state_id" jdbcType="BIGINT" property="msgStateId"/>
+        <result column="msgtype_id" jdbcType="BIGINT" property="msgtypeId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        msg_id
+        , msg_title, msg_context, msg_send_date, msg_send_user_id, msg_receive_user_id,
+    msg_state_id, msgtype_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_message
+        where msg_id = #{msgId,jdbcType=BIGINT}
+    </select>
+    <select id="selectMsgByMsgType" resultMap="messageType">
+        select *
+        from t_message
+        where msg_receive_user_id = #{user.userId}
+        <if test="msgType != null and msgType.msgTypeId != null">
+            and msgyype_id = #{msgType.msgTypeId}
+        </if>
+        order by msg_send_date desc
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_message
+        where msg_id = #{msgId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insertMsg" parameterType="com.hu.video.entity.TMessage">
+        insert into t_message (msg_id, msg_title, msg_context,
+                               msg_send_date, msg_send_user_id, msg_receive_user_id,
+                               msg_state_id, msgtype_id)
+        values (default, #{msgTitle,jdbcType=VARCHAR}, #{msgContext,jdbcType=VARCHAR},
+                now(), #{sendUser.userId,jdbcType=BIGINT}, #{receiveUser.userId},
+                #{msgState.stateId,jdbcType=BIGINT}, #{msgType.msgTypeId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.hu.video.entity.TMessage">
+        insert into t_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="msgId != null">
+                msg_id,
+            </if>
+            <if test="msgTitle != null">
+                msg_title,
+            </if>
+            <if test="msgContext != null">
+                msg_context,
+            </if>
+            <if test="msgSendDate != null">
+                msg_send_date,
+            </if>
+            <if test="msgSendUserId != null">
+                msg_send_user_id,
+            </if>
+            <if test="msgReceiveUserId != null">
+                msg_receive_user_id,
+            </if>
+            <if test="msgStateId != null">
+                msg_state_id,
+            </if>
+            <if test="msgtypeId != null">
+                msgtype_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="msgId != null">
+                #{msgId,jdbcType=BIGINT},
+            </if>
+            <if test="msgTitle != null">
+                #{msgTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="msgContext != null">
+                #{msgContext,jdbcType=VARCHAR},
+            </if>
+            <if test="msgSendDate != null">
+                #{msgSendDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="msgSendUserId != null">
+                #{msgSendUserId,jdbcType=BIGINT},
+            </if>
+            <if test="msgReceiveUserId != null">
+                #{msgReceiveUserId,jdbcType=BIGINT},
+            </if>
+            <if test="msgStateId != null">
+                #{msgStateId,jdbcType=BIGINT},
+            </if>
+            <if test="msgtypeId != null">
+                #{msgtypeId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TMessage">
+        update t_message
+        <set>
+            <if test="msgTitle != null">
+                msg_title = #{msgTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="msgContext != null">
+                msg_context = #{msgContext,jdbcType=VARCHAR},
+            </if>
+            <if test="msgSendDate != null">
+                msg_send_date = #{msgSendDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="msgSendUserId != null">
+                msg_send_user_id = #{msgSendUserId,jdbcType=BIGINT},
+            </if>
+            <if test="msgReceiveUserId != null">
+                msg_receive_user_id = #{msgReceiveUserId,jdbcType=BIGINT},
+            </if>
+            <if test="msgStateId != null">
+                msg_state_id = #{msgStateId,jdbcType=BIGINT},
+            </if>
+            <if test="msgtypeId != null">
+                msgtype_id = #{msgtypeId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where msg_id = #{msgId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TMessage">
+        update t_message
+        set msg_title           = #{msgTitle,jdbcType=VARCHAR},
+            msg_context         = #{msgContext,jdbcType=VARCHAR},
+            msg_send_date       = #{msgSendDate,jdbcType=TIMESTAMP},
+            msg_send_user_id    = #{msgSendUserId,jdbcType=BIGINT},
+            msg_receive_user_id = #{msgReceiveUserId,jdbcType=BIGINT},
+            msg_state_id        = #{msgStateId,jdbcType=BIGINT},
+            msgtype_id          = #{msgtypeId,jdbcType=BIGINT}
+        where msg_id = #{msgId,jdbcType=BIGINT}
+    </update>
+    <update id="updateMessageState">
+        update t_message
+        set msg_state_id = #{stateId}
+        where msg_id = #{msgId}
+    </update>
+
+    <resultMap id="messageType" type="com.hu.video.entity.TMessage">
+        <id column="msg_id" jdbcType="BIGINT" property="msgId"/>
+        <result column="msg_title" jdbcType="VARCHAR" property="msgTitle"/>
+        <result column="msg_context" jdbcType="VARCHAR" property="msgContext"/>
+        <result column="msg_send_date" jdbcType="TIMESTAMP" property="msgSendDate"/>
+
+        <association property="msgState" javaType="com.hu.video.entity.TState" column="msg_state_id" select="com.hu.video.mapper.TStateMapper.selectByPrimaryKey" />
+
+        <association property="sendUser" javaType="com.hu.video.entity.TUser" column="msg_send_user_id" select="com.hu.video.mapper.TUserMapper.selectByPrimaryKey" />
+
+        <association property="receiveUser" javaType="com.hu.video.entity.TUser" column="msg_receive_user_id" select="com.hu.video.mapper.TUserMapper.selectByPrimaryKey" />
+
+        <association property="msgType" javaType="com.hu.video.entity.TMsgtype" column="msgtype_id" select="com.hu.video.mapper.TMsgtypeMapper.selectByPrimaryKey" />
+
+    </resultMap>
+</mapper>

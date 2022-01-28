@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TUserMapper">
+    <resultMap id="BaseResultMap" type="com.hu.video.entity.TUser">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_age" jdbcType="INTEGER" property="userAge"/>
+        <result column="user_sex" jdbcType="VARCHAR" property="userSex"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="fan_num" jdbcType="INTEGER" property="fanNum"/>
+        <result column="user_tel" jdbcType="VARCHAR" property="userTel"/>
+        <result column="register_date" jdbcType="TIMESTAMP" property="registerDate"/>
+        <result column="icon_url" jdbcType="VARCHAR" property="iconUrl"/>
+        <result column="state_id" jdbcType="INTEGER" property="stateId"/>
+        <result column="encrypted_problem" jdbcType="VARCHAR" property="encryptedProblem"/>
+    </resultMap>
+    <resultMap id="AdminUserlist" type="com.hu.video.entity.dto.UserStateDTO">
+        <id column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_age" jdbcType="INTEGER" property="userAge"/>
+        <result column="user_sex" jdbcType="VARCHAR" property="userSex"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="fan_num" jdbcType="INTEGER" property="fanNum"/>
+        <result column="user_tel" jdbcType="VARCHAR" property="userTel"/>
+        <result column="register_date" jdbcType="TIMESTAMP" property="registerDate"/>
+        <result column="icon_url" jdbcType="VARCHAR" property="iconUrl"/>
+        <result column="state_id" jdbcType="INTEGER" property="stateId"/>
+        <result column="encrypted_problem" jdbcType="VARCHAR" property="encryptedProblem"/>
+        <association javaType="com.hu.video.entity.TState" property="tState">
+            <result column="state_name" jdbcType="VARCHAR" property="stateName"/>
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        user_id
+        , user_name, user_age, user_sex, password, fan_num, user_tel, register_date,
+    icon_url, state_id, encrypted_problem
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where user_id = #{userId,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryByuserTelAndPwd" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where user_tel = #{userTel} and password = #{password}
+    </select>
+    <select id="queryByuserTel" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_user
+        where user_tel = #{userTel}
+    </select>
+    <select id="userList" resultMap="AdminUserlist">
+        SELECT t1.*, t2.state_name
+        FROM t_user t1,
+             t_state t2
+        WHERE t2.`state_id` = t1.`state_id`
+    </select>
+    <select id="getUserById" resultMap="AdminUserlist">
+        SELECT t1.*, t2.state_name
+        FROM t_user t1,
+             t_state t2
+        WHERE t2.`state_id` = t1.`state_id` and t1.user_id = #{id}
+    </select>
+    <select id="getUserByName" resultMap="AdminUserlist">
+        SELECT t1.*, t2.state_name
+        FROM t_user t1,
+             t_state t2
+        WHERE t2.`state_id` = t1.`state_id` and t1.user_name like concat('%', #{username}, '%')
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_user
+        where user_id = #{userId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.hu.video.entity.TUser">
+        insert into t_user (user_id, user_name, user_age,
+                            user_sex, password, fan_num,
+                            user_tel, register_date, icon_url,
+                            state_id, encrypted_problem)
+        values (#{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{userAge,jdbcType=INTEGER},
+                #{userSex,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{fanNum,jdbcType=INTEGER},
+                #{userTel,jdbcType=VARCHAR}, #{registerDate,jdbcType=TIMESTAMP}, #{iconUrl,jdbcType=VARCHAR},
+                #{stateId,jdbcType=INTEGER}, #{encryptedProblem})
+    </insert>
+    <insert id="insertSelective" parameterType="com.hu.video.entity.TUser">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userAge != null">
+                user_age,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="fanNum != null">
+                fan_num,
+            </if>
+            <if test="userTel != null">
+                user_tel,
+            </if>
+            <if test="registerDate != null">
+                register_date,
+            </if>
+            <if test="iconUrl != null">
+                icon_url,
+            </if>
+            <if test="stateId != null">
+                state_id,
+            </if>
+            <if test="encryptedProblem != null">
+                encrypted_problem,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userAge != null">
+                #{userAge,jdbcType=INTEGER},
+            </if>
+            <if test="userSex != null">
+                #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="fanNum != null">
+                #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="userTel != null">
+                #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iconUrl != null">
+                #{iconUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="stateId != null">
+                #{stateId,jdbcType=INTEGER},
+            </if>
+            <if test="encryptedProblem != null">
+                #{encryptedProblem},
+            </if>
+        </trim>
+    </insert>
+    <insert id="register">
+        insert into t_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="userAge != null">
+                user_age,
+            </if>
+            <if test="userSex != null">
+                user_sex,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="fanNum != null">
+                fan_num,
+            </if>
+            <if test="userTel != null">
+                user_tel,
+            </if>
+            <if test="registerDate != null">
+                register_date,
+            </if>
+            <if test="iconUrl != null">
+                icon_url,
+            </if>
+            <if test="stateId != null">
+                state_id,
+            </if>
+            <if test="encryptedProblem != null">
+                encrypted_problem,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                default ,
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userAge != null">
+                #{userAge,jdbcType=INTEGER},
+            </if>
+            <if test="userSex != null">
+                #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="fanNum != null">
+                #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="userTel != null">
+                #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iconUrl != null">
+                #{iconUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="stateId != null">
+                #{stateId,jdbcType=INTEGER},
+            </if>
+            <if test="encryptedProblem != null">
+                #{encryptedProblem},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TUser">
+        update t_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="encryptedProblem != null">
+                encrypted_problem = #{encryptedProblem},
+            </if>
+            <if test="userAge != null">
+                user_age = #{userAge,jdbcType=INTEGER},
+            </if>
+            <if test="userSex != null">
+                user_sex = #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="fanNum != null">
+                fan_num = #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="userTel != null">
+                user_tel = #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                register_date = #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iconUrl != null">
+                icon_url = #{iconUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="stateId != null">
+                state_id = #{stateId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TUser">
+        update t_user
+        set user_name         = #{userName,jdbcType=VARCHAR},
+            user_age          = #{userAge,jdbcType=INTEGER},
+            user_sex          = #{userSex,jdbcType=VARCHAR},
+            password          = #{password,jdbcType=VARCHAR},
+            fan_num           = #{fanNum,jdbcType=INTEGER},
+            user_tel          = #{userTel,jdbcType=VARCHAR},
+            register_date     = #{registerDate,jdbcType=TIMESTAMP},
+            icon_url          = #{iconUrl,jdbcType=VARCHAR},
+            encrypted_problem = #{encryptedProblem},
+            state_id          = #{stateId,jdbcType=INTEGER}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateUserByUserId">
+        update t_user
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="encryptedProblem != null and encryptedProblem !=''">
+                encrypted_problem = #{encryptedProblem},
+            </if>
+            <if test="userAge != null and userAge !=''">
+                user_age = #{userAge,jdbcType=INTEGER},
+            </if>
+            <if test="userSex != null and userSex !=''">
+                user_sex = #{userSex,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="fanNum != null and fanNum != ''">
+                fan_num = #{fanNum,jdbcType=INTEGER},
+            </if>
+            <if test="userTel != null">
+                user_tel = #{userTel,jdbcType=VARCHAR},
+            </if>
+            <if test="registerDate != null">
+                register_date = #{registerDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iconUrl != null and iconUrl != ''">
+                icon_url = #{iconUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="stateId != null">
+                state_id = #{stateId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+    <update id="updateUserIcon">
+        update t_user
+        set icon_url = #{s}
+        where user_id = #{userId}
+    </update>
+</mapper>

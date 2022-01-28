@@ -1,0 +1,24 @@
+.username-ipt, .password-ipt{
+  width: 100%;
+}
+
+.verify-ipt, .login-verify{
+  width: 50%;
+  float: left;
+}
+.login-verify{
+  padding-left: 10px;
+  height: 37.25px;
+}
+.login-verify> img{
+  width: 100%;
+  height: 100%;
+}
+.login-auto{
+  line-height: 40px;
+  padding-left: 4px;
+  color: #98A2AA;
+}
+.login-verify {
+  cursor: pointer;
+}

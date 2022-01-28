@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>荣光影视</title>
+    <!-- Template CSS -->
+    <!--  <link rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">-->
+    <link rel="stylesheet" th:href="@{/static/css/style-starter.css}">
+    <script th:src="@{/static/layui.js}"></script>
+    <script th:src="@{/static/js/jquery-1.9.1.min.js}"></script>
+    <script th:src="@{/static/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/static/css/layui.css}">
+</head>
+
+<body>
+
+<!-- header -->
+<header id="site-header" class="w3l-header fixed-top">
+    <!--/nav-->
+    <nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-3">
+        <div class="container">
+            <h1><a class="navbar-brand" th:href="@{/user/toIndex}">
+                荣光影视 </a></h1>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <!-- <span class="navbar-toggler-icon"></span> -->
+                <span class="fa icon-expand fa-bars"></span>
+                <span class="fa icon-close fa-times"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{/user/toIndex}">主页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">关于我们</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">联系我们</a>
+                    </li>
+                </ul>
+
+                <!--/search-right-->
+                <!--/search-right-->
+                <div class="search-right">
+                    <a href="#search" class="btn search-hny mr-lg-3 mt-lg-0 mt-4" title="search">搜索<span
+                            class="fa fa-search ml-3" aria-hidden="true"></span></a>
+                    <!-- search popup -->
+                    <div id="search" class="pop-overlay">
+                        <div class="popup">
+                            <form th:action="@{/video/search}" method="post" class="search-box">
+                                <input type="search" placeholder="Search your Keyword" name="videoTitle"
+                                       required="required" autofocus="">
+                                <button type="submit" class="btn"><span class="fa fa-search"
+                                                                        aria-hidden="true"></span></button>
+                            </form>
+                            <div class="browse-items">
+                                <h3 class="hny-title two mt-md-5 mt-4">荣光影视搜索</h3>
+                                <ul class="search-items">
+                                    <li><a href="#">影视</a></li>
+                                    <li><a href="#">新闻</a></li>
+                                    <li><a href="#">生活</a></li>
+                                    <li><a href="#">美食</a></li>
+                                    <li><a href="#">音乐</a></li>
+                                    <li><a href="#">电视剧</a></li>
+                                    <li><a href="#">舞蹈</a></li>
+                                    <li><a href="#">动漫</a></li>
+                                    <li><a href="#">娱乐</a></li>
+                                    <li><a href="#">科技数码</a></li>
+                                    <li><a href="#">体育</a></li>
+                                    <li><a href="#">美妆</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <a class="close" href="#close">×</a>
+                    </div>
+                    <!-- /search popup -->
+                    <!--/search-right-->
+                </div>
+
+
+            </div>
+            <!-- toggle switch for light and dark theme -->
+            <div class="mobile-position">
+                <nav class="navigation">
+                    <div class="theme-switch-wrapper">
+                        <label class="theme-switch" for="checkbox">
+                            <input type="checkbox" id="checkbox">
+                            <div class="mode-container">
+                                <i class="gg-sun"></i>
+                                <i class="gg-moon"></i>
+                            </div>
+                        </label>
+                    </div>
+                </nav>
+            </div>
+            <!-- //toggle switch for light and dark theme -->
+            <!--<button type="button" class="btn btn-primary btn-lg active">登录</button>-->
+            <div th:unless="${session.user}">
+                <a th:href="@{/user/toLogin}" class="btn btn-primary btn-lg"
+                   style="height: 38px;font-size: 14px;">登录</a>
+            </div>
+            <div th:if="${session.user}">
+                <div>
+                    <button style="border-radius:7%;height: 50px;" class="layui-btn layui-btn-primary" id="demo4">
+                        <span th:text="${session.user.userName}"></span>
+                        <!--<i class="layui-icon layui-icon-more-vertical layui-font-12">
+                        </i>-->
+                        <i class="layui-icon">&#xe667;</i>
+                        <span th:text="${session.messageCount}"></span>
+                    </button>
+                </div>
+
+            </div>
+            <div th:if="${session.user}">
+                <div style="height: 50px;width: 50px;position: relative; margin-left: 10px">
+                    <img width="100%" height="100%" th:src="${session.user.iconUrl}">
+                </div>
+                <!--<div th:text="${session.messageCount}"></div>-->
+            </div>
+        </div>
+    </nav>
+    <!--//nav-->
+</header>
+<!-- //header -->
+<!-- main-slider -->
+<section class="w3l-main-slider position-relative" id="home">
+    <div class="companies20-content">
+        <div class="owl-one owl-carousel owl-theme">
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view bg bg2">
+                        <div class="banner-info">
+                            <h3>最近上线视频</h3>
+                            <p>段小楼（张丰毅）与程蝶衣（张国荣）是一对打小一起长大的师兄弟....<span class="over-para">
+									霸王别姬</span></p>
+                            <a th:href="@{/video/videoPlay?videoId=1}" class="popup-with-zoom-anim play-view1">
+                                <span class="video-play-icon">
+                                    <span class="fa fa-play"></span>
+                                </span>
+                                <h6>现在观看</h6>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info  banner-view banner-top1 bg bg2">
+                        <div class="banner-info">
+                            <h3>最近上线视频</h3>
+                            <p>2001年的某一天，刚刚考上大学的贾晓玲（贾玲 饰）经历了人生中的一次大起大落。一心想要成为母亲骄傲的她却因母亲突遭严重意外...
+                                <span class="over-para"> 你好，李焕英</span></p>
+                            <a th:href="@{/video/videoPlay?videoId=4}" class="popup-with-zoom-anim play-view1">
+                                <span class="video-play-icon">
+                                    <span class="fa fa-play"></span>
+                                </span>
+                                <h6>现在观看</h6>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view banner-top2 bg bg2">
+                        <div class="banner-info">
+                            <h3>最近上线视频</h3>
+                            <p>陈念（周冬雨 饰）是一名即将参加高考的高三学生，同校女生胡晓蝶（张艺凡 饰）...<span class="over-para">
+                            少年的你</span></p>
+                            <a th:href="@{/video/videoPlay?videoId=6}" class="popup-with-zoom-anim play-view1">
+                                <span class="video-play-icon">
+                                    <span class="fa fa-play"></span>
+                                </span>
+                                <h6>现在观看</h6>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </div>
+            <div class="item">
+                <li>
+                    <div class="slider-info banner-view banner-top3 bg bg2">
+                        <div class="banner-info">
+                            <h3>最近上线视频</h3>
+                            <p>至尊宝（周星驰 饰）被月光宝盒带回到五百年前，遇见紫霞仙子（朱茵 饰）...<span class="over-para">大话西游之大圣娶亲</span></p>
+                            <a th:href="@{/video/videoPlay?videoId=5}" class="popup-with-zoom-anim play-view1">
+                                <span class="video-play-icon">
+                                    <span class="fa fa-play"></span>
+                                </span>
+                                <h6>现在观看</h6>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="w3l-albums py-5" id="projects">
+    <div class="container py-lg-4">
+        <div class="row">
+            <div class="col-lg-12 mx-auto">
+                <!--Horizontal Tab-->
+                <div id="parentHorizontalTab">
+                    <ul class="resp-tabs-list hor_1">
+                        <li>影视</li>
+                        <li>美食</li>
+                        <li>音乐</li>
+                        <li>娱乐</li>
+                        <li>体育</li>
+                        <li>生活</li>
+                        <div class="clear"></div>
+                    </ul>
+                    <div class="resp-tabs-container hor_1">
+                        <div class="albums-content">
+                            <div class="row" id="film">
+                            </div>
+                        </div>
+                        <div class="albums-content">
+                            <div class="row" id="food">
+                            </div>
+                        </div>
+                        <div class="albums-content">
+                            <div class="row" id="music">
+                            </div>
+                        </div>
+                        <div class="albums-content">
+                            <div class="row" id="amuse"></div>
+                        </div>
+
+                        <div class="albums-content">
+                            <div class="row" id="sport">
+                            </div>
+                        </div>
+
+                        <div class="albums-content">
+                            <div class="row" id="life">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- //banner-slider-->
+<!-- main-slider -->
+<!--grids-sec1-->
+<section class="w3l-grids">
+    <div class="grids-main py-5">
+        <div class="container py-lg-3">
+            <div class="headerhny-title">
+                <div class="w3l-title-grids">
+                    <div class="headerhny-left">
+                        <h3 class="hny-title">最受欢迎</h3>
+                    </div>
+                    <div class="headerhny-right text-lg-right">
+                        <h4><a class="show-title" href="#">展示全部</a></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="w3l-populohny-grids" id="popular">
+            </div>
+        </div>
+    </div>
+</section>
+<!--//grids-sec1-->
+<!--grids-sec2-->
+<section class="w3l-grids">
+    <div class="grids-main py-5">
+        <div class="container py-lg-3">
+            <div class="headerhny-title">
+                <div class="w3l-title-grids">
+                    <div class="headerhny-left">
+                        <h3 class="hny-title">最近上映</h3>
+                    </div>
+                    <div class="headerhny-right text-lg-right">
+                        <h4><a class="show-title" href="#">展示全部</a></h4>
+                    </div>
+                </div>
+            </div>
+            <div class="w3l-populohny-grids" id="last">
+
+            </div>
+        </div>
+
+    </div>
+    <div id="what"></div>
+</section>
+<!--grids-sec2-->
+<!-- //mid-slider-->
+<!-- footer-66 -->
+<footer class="w3l-footer">
+    <section class="footer-inner-main">
+        </div>
+        <div class="below-section">
+            <div class="container">
+                <div class="copyright-footer">
+                    <div class="columns text-lg-left">
+                        <p>&copy; 2021 软件17-4胡建. All rights reserved | Designed by</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- copyright -->
+        <!-- move top -->
+        <button onclick="topFunction()" id="movetop" title="Go to top">
+            <span class="fa fa-arrow-up" aria-hidden="true"></span>
+        </button>
+        <script>
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function () {
+                scrollFunction()
+            };
+
+            function scrollFunction() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    document.getElementById("movetop").style.display = "block";
+                } else {
+                    document.getElementById("movetop").style.display = "none";
+                }
+            }
+
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
+        <!-- /move top -->
+
+    </section>
+</footer>
+<!--//footer-66 -->
+</body>
+
+</html>
+<!-- responsive tabs -->
+<script th:inline="javascript">
+
+    layui.use(['dropdown', 'util', 'layer'], function () {
+        var dropdown = layui.dropdown
+            , util = layui.util
+            , layer = layui.layer
+            , $ = layui.jquery;
+        dropdown.render({
+            elem: '#demo4'
+            , trigger: 'hover'
+            , data: [
+                {
+                    title: '个人中心'
+                    , href: '/user/toUEditorUser'
+                    , id: 100
+                }, {
+                    title: "消息中心"
+                    , href: '/user/toMessage'
+                    , id: 101
+                }, {
+                    title: '视频中心'
+                    , href: '/video/toVideoCenter'
+                    , id: 101
+                }, {
+                    title: '视频上传'
+                    , href: '/video/toAddVideo'
+                    , id: 102
+                }, {
+                    title: '退出'
+                    , href: '/user/logout'
+                    , id: 103
+                }
+            ]
+        });
+    })
+</script>
+<script th:src="@{/static/js/easyResponsiveTabs.js}"></script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        //Horizontal Tab
+        $('#parentHorizontalTab').easyResponsiveTabs({
+            type: 'default', //Types: default, vertical, accordion
+            width: 'auto', //auto or any width like 600px
+            fit: true, // 100% fit in a container
+            tabidentify: 'hor_1', // The tab groups identifier
+            activate: function (event) { // Callback function if tab is switched
+                var $tab = $(this);
+                var $info = $('#nested-tabInfo');
+                var $name = $('span', $info);
+                $name.text($tab.text());
+                $info.show();
+            }
+        });
+    });
+</script>
+<!-- //responsive tabs -->
+<!--/theme-change-->
+<script th:src="@{/static/js/theme-change.js}"></script>
+<!-- //theme-change-->
+<script th:src="@{/static/js/owl.carousel.js}"></script>
+<!-- script for banner slider-->
+<script>
+    $(document).ready(function () {
+        $('.owl-one').owlCarousel({
+            stagePadding: 280,
+            loop: true,
+            margin: 20,
+            nav: true,
+            responsiveClass: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplaySpeed: 1000,
+            autoplayHoverPause: false,
+            responsive: {
+                0: {
+                    items: 1,
+                    stagePadding: 40,
+                    nav: false
+                },
+                480: {
+                    items: 1,
+                    stagePadding: 60,
+                    nav: true
+                },
+                667: {
+                    items: 1,
+                    stagePadding: 80,
+                    nav: true
+                },
+                1000: {
+                    items: 1,
+                    nav: true
+                }
+            }
+        })
+    })
+</script>
+<!-- //script -->
+<script>
+    $(document).ready(function () {
+        $('.owl-three').owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: false,
+            responsiveClass: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplaySpeed: 1000,
+            autoplayHoverPause: false,
+            responsive: {
+                0: {
+                    items: 2,
+                    nav: false
+                },
+                480: {
+                    items: 2,
+                    nav: true
+                },
+                667: {
+                    items: 3,
+                    nav: true
+                },
+                1000: {
+                    items: 5,
+                    nav: true
+                }
+            }
+        })
+    })
+</script>
+<!-- //script -->
+<!-- /mid-script -->
+<script>
+    $(document).ready(function () {
+        $('.owl-mid').owlCarousel({
+            loop: true,
+            margin: 0,
+            nav: false,
+            responsiveClass: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplaySpeed: 1000,
+            autoplayHoverPause: false,
+            responsive: {
+                0: {
+                    items: 1,
+                    nav: false
+                },
+                480: {
+                    items: 1,
+                    nav: false
+                },
+                667: {
+                    items: 1,
+                    nav: true
+                },
+                1000: {
+                    items: 1,
+                    nav: true
+                }
+            }
+        })
+    })
+</script>
+<!-- //mid-script -->
+
+<!-- script for owlcarousel -->
+<!-- Template JavaScript -->
+<script th:src="@{/static/js/jquery.magnific-popup.min.js}"></script>
+<script>
+    $(document).ready(function () {
+        $('.popup-with-zoom-anim').magnificPopup({
+            type: 'inline',
+
+            fixedContentPos: false,
+            fixedBgPos: true,
+
+            overflowY: 'auto',
+
+            closeBtnInside: true,
+            preloader: false,
+
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-zoom-in'
+        });
+
+        $('.popup-with-move-anim').magnificPopup({
+            type: 'inline',
+
+            fixedContentPos: false,
+            fixedBgPos: true,
+
+            overflowY: 'auto',
+
+            closeBtnInside: true,
+            preloader: false,
+
+            midClick: true,
+            removalDelay: 300,
+            mainClass: 'my-mfp-slide-bottom'
+        });
+    });
+</script>
+<!--//-->
+<!-- disable body scroll which navbar is in active -->
+<script>
+    $(function () {
+        $('.navbar-toggler').click(function () {
+            $('body').toggleClass('noscroll');
+        })
+    });
+</script>
+<!-- disable body scroll which navbar is in active -->
+
+<script>
+    $(function () {
+
+        /*-------last start------*/
+        $.ajax({
+            type: 'get',
+            url: '/video/getIndexLastVideo',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="item vhny-grid" />')
+                    var div2 = $('<div class="box16 mb-0" />')
+                    div2.appendTo(div1)
+                    var a3 = $('<a/>')
+                    a3.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a3.appendTo(div2)
+                    var f41 = $('<figure style="width: 300px" />')
+                    var img5 = $('<img class="img-fluid" alt="" />')
+                    img5.attr('src', this.thunmbnailUrl)
+                    img5.appendTo(f41)
+                    f41.appendTo(a3)
+                    var div42 = $('<div class="box-content" />')
+                    div42.appendTo(a3)
+                    var h52 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h52.appendTo(div42)
+                    var span43 = $('<span class="fa fa-play video-icon" aria-hidden="true"></span>')
+                    span43.appendTo(a3)
+                    var h22 = $('<h3/>')
+                    h22.appendTo(div1)
+                    var a3 = $('<a class="title-gd" />')
+                    a3.attr('src', "/video/videoPlay?videoId=" + this.videoId)
+                    a3.appendTo(h22)
+                    var str = this.videoInfo.substr(0,30)
+                    var p23 = $('<p/>')
+                    p23.text(str)
+                    p23.appendTo(div1)
+                    var div24 = $('<div class="button-center text-center mt-4" />')
+                    div24.appendTo(div1)
+                    var a43 = $('<a class="btn watch-button">现在观看</a>')
+                    a43.appendTo(div24)
+                    div1.appendTo($('#last'))
+                })
+            }
+        })
+        /*-------last end------*/
+
+        /*-------popular start------*/
+        $.ajax({
+            type: 'get',
+            url: '/video/getIndexRecommendVideo',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="item vhny-grid" />')
+                    var div2 = $('<div class="box16" />')
+                    div2.appendTo(div1)
+                    var a3 = $('<a/>')
+                    a3.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a3.appendTo(div2)
+                    var f41 = $('<figure />')
+                    var img5 = $('<img class="img-fluid" alt="author image" />')
+                    img5.attr('src', this.thunmbnailUrl)
+                    img5.appendTo(f41)
+                    f41.appendTo(a3)
+                    var div42 = $('<div class="box-content" />')
+                    div42.appendTo(a3)
+                    var h51 = $('<h3 class="title" />')
+                    h51.text(this.videoTitle)
+                    h51.appendTo(div42)
+                    var h52 = $('<h4> <span class="post"><span class="fa fa-clock-o"></span> 5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h52.appendTo(div42)
+                    var span43 = $('<span class="fa fa-play video-icon" aria-hidden="true"></span>')
+                    span43.appendTo(a3)
+
+                    div1.appendTo($('#popular'))
+                })
+            }
+        })
+        /*-------popular end------*/
+
+        /*-------By Type Ajax begin------*/
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=1',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#film'))
+                })
+            }
+        })
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=4',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#food'))
+                })
+            }
+        })
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=5',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#music'))
+                })
+            }
+        })
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=9',
+            dataType: 'json',
+            success: function (data) {
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#amuse'))
+                })
+            }
+        })
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=11',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#sport'))
+                })
+            }
+        })
+        $.ajax({
+            type: 'get',
+            url: '/video/getVideoByType?videoTypeId=3',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data)
+                $.each(data, function (i, val) {
+                    var div1 = $('<div class="col-lg-4 new-relise-gd mt-lg-0 mt-0" />')
+                    var div2 = $('<div class="slider-info" />')
+                    div2.appendTo(div1)
+                    var div31 = $('<div class="img-circle" />')
+                    div31.appendTo(div2)
+                    var a41 = $('<a/>')
+                    a41.attr("href", "/video/videoPlay?videoId=" + this.videoId)
+                    a41.appendTo(div31)
+                    var img51 = $('<img class="img-fluid" alt="author image" />')
+                    img51.attr('src', this.thunmbnailUrl)
+                    img51.appendTo(a41)
+                    var div52 = $('<div class="overlay-icon" />')
+                    div52.appendTo(a41)
+                    var span6 = $('<span class="fa fa-play video-icon" aria-hidden="true" />')
+                    span6.appendTo(div52)
+                    var div32 = $('<div class="message" />')
+                    div32.appendTo(div2)
+                    var p41 = $('<p>国语</p>')
+                    p41.appendTo(div32)
+                    var a42 = $('<a class="author-book-title"/>')
+                    a42.text(this.videoTitle)
+                    a42.attr('href', "/video/videoPlay?videoId=" + this.videoId)
+                    a42.appendTo(div32)
+                    var h43 = $('<h4><span class="post"><span class="fa fa-clock-o"></span>5min</span><span class="post fa fa-heart text-right"></span></h4>')
+                    h43.appendTo(div32)
+                    div1.appendTo($('#life'))
+                })
+            }
+        })
+        /*-------By Type Ajax end------*/
+    })
+</script>
+<!--/MENU-JS-->
+<script>
+    $(window).on("scroll", function () {
+        var scroll = $(window).scrollTop();
+
+        if (scroll >= 80) {
+            $("#site-header").addClass("nav-fixed");
+        } else {
+            $("#site-header").removeClass("nav-fixed");
+        }
+    });
+
+    //Main navigation Active Class Add Remove
+    $(".navbar-toggler").on("click", function () {
+        $("header").toggleClass("active");
+    });
+    $(document).on("ready", function () {
+        if ($(window).width() > 991) {
+            $("header").removeClass("active");
+        }
+        $(window).on("resize", function () {
+            if ($(window).width() > 991) {
+                $("header").removeClass("active");
+            }
+        });
+    });
+</script>
+<!--//MENU-JS-->
+
+

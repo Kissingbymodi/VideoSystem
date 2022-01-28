@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TMsgtypeMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.TMsgtype">
+    <id column="msgtype_id" jdbcType="BIGINT" property="msgTypeId" />
+    <result column="msgtype_name" jdbcType="VARCHAR" property="msgTypeName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    msgtype_id, msgtype_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_msgtype
+    where msgtype_id = #{msgtypeId,jdbcType=BIGINT}
+  </select>
+    <select id="selectByTypeName" resultType="com.hu.video.entity.TMsgtype">
+      select msgtype_id msgTypeId, msgtype_name msgTypeName
+      from t_msgtype
+      where msgtype_name = #{msgTypeName}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_msgtype
+    where msgtype_id = #{msgtypeId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.TMsgtype">
+    insert into t_msgtype (msgtype_id, msgtype_name)
+    values (#{msgtypeId,jdbcType=BIGINT}, #{msgtypeName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.TMsgtype">
+    insert into t_msgtype
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msgtypeId != null">
+        msgtype_id,
+      </if>
+      <if test="msgtypeName != null">
+        msgtype_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msgtypeId != null">
+        #{msgtypeId,jdbcType=BIGINT},
+      </if>
+      <if test="msgtypeName != null">
+        #{msgtypeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TMsgtype">
+    update t_msgtype
+    <set>
+      <if test="msgtypeName != null">
+        msgtype_name = #{msgtypeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where msgtype_id = #{msgtypeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TMsgtype">
+    update t_msgtype
+    set msgtype_name = #{msgtypeName,jdbcType=VARCHAR}
+    where msgtype_id = #{msgtypeId,jdbcType=BIGINT}
+  </update>
+</mapper>

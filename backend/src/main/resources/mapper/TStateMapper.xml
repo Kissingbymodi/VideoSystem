@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TStateMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.TState">
+    <id column="state_id" jdbcType="BIGINT" property="stateId" />
+    <result column="state_name" jdbcType="VARCHAR" property="stateName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    state_id, state_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_state
+    where state_id = #{stateId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_state
+    where state_id = #{stateId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.TState">
+    insert into t_state (state_id, state_name)
+    values (#{stateId,jdbcType=BIGINT}, #{stateName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.TState">
+    insert into t_state
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="stateId != null">
+        state_id,
+      </if>
+      <if test="stateName != null">
+        state_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="stateId != null">
+        #{stateId,jdbcType=BIGINT},
+      </if>
+      <if test="stateName != null">
+        #{stateName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TState">
+    update t_state
+    <set>
+      <if test="stateName != null">
+        state_name = #{stateName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where state_id = #{stateId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TState">
+    update t_state
+    set state_name = #{stateName,jdbcType=VARCHAR}
+    where state_id = #{stateId,jdbcType=BIGINT}
+  </update>
+</mapper>

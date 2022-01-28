@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/video?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+  servlet:
+    multipart:
+      enabled: true #是否启用http上传处理
+      max-request-size: 1024MB
+      max-file-size: 1024MB
+
+mybatis:
+  type-aliases-package: com.hu.video.entity
+  mapper-locations: classpath:mapper/*.xml
+#  config-location: classpath:mybatis/mybatis-config.xml
+
+#分页pageHelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+

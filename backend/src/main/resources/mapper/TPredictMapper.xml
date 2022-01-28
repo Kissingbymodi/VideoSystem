@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TPredictMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.TPredict">
+    <id column="pre_id" jdbcType="BIGINT" property="preId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="video_id" jdbcType="BIGINT" property="videoId" />
+    <result column="pre_star" jdbcType="REAL" property="preStar" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    pre_id, user_id, video_id, pre_star
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_predict
+    where pre_id = #{preId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_predict
+    where pre_id = #{preId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.TPredict">
+    insert into t_predict (pre_id, user_id, video_id, 
+      pre_star)
+    values (#{preId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{videoId,jdbcType=BIGINT}, 
+      #{preStar,jdbcType=REAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.TPredict">
+    insert into t_predict
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="preId != null">
+        pre_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="videoId != null">
+        video_id,
+      </if>
+      <if test="preStar != null">
+        pre_star,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="preId != null">
+        #{preId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="videoId != null">
+        #{videoId,jdbcType=BIGINT},
+      </if>
+      <if test="preStar != null">
+        #{preStar,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TPredict">
+    update t_predict
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="videoId != null">
+        video_id = #{videoId,jdbcType=BIGINT},
+      </if>
+      <if test="preStar != null">
+        pre_star = #{preStar,jdbcType=REAL},
+      </if>
+    </set>
+    where pre_id = #{preId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TPredict">
+    update t_predict
+    set user_id = #{userId,jdbcType=BIGINT},
+      video_id = #{videoId,jdbcType=BIGINT},
+      pre_star = #{preStar,jdbcType=REAL}
+    where pre_id = #{preId,jdbcType=BIGINT}
+  </update>
+</mapper>

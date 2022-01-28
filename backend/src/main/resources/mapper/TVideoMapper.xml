@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TVideoMapper">
+    <resultMap id="BaseResultMap" type="com.hu.video.entity.TVideo">
+        <id column="video_id" jdbcType="BIGINT" property="videoId"/>
+        <result column="video_title" jdbcType="VARCHAR" property="videoTitle"/>
+        <result column="video_info" jdbcType="VARCHAR" property="videoInfo"/>
+        <result column="edit_date" jdbcType="TIMESTAMP" property="editDate"/>
+        <result column="video_url" jdbcType="VARCHAR" property="videoUrl"/>
+        <result column="thunmbnail_url" jdbcType="VARCHAR" property="thunmbnailUrl"/>
+        <result column="video_state_id" jdbcType="BIGINT" property="videoStateId"/>
+        <result column="view_num" jdbcType="INTEGER" property="viewNum"/>
+        <result column="pp_num" jdbcType="INTEGER" property="ppNum"/>
+        <result column="video_type_id" jdbcType="BIGINT" property="videoTypeId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+    </resultMap>
+
+    <resultMap type="com.hu.video.entity.TVideo" id="videoresultplus">
+        <id column="video_id" jdbcType="BIGINT" property="videoId"/>
+        <result column="video_title" jdbcType="VARCHAR" property="videoTitle"/>
+        <result column="video_info" jdbcType="VARCHAR" property="videoInfo"/>
+        <result column="edit_date" jdbcType="TIMESTAMP" property="editDate"/>
+        <result column="video_url" jdbcType="VARCHAR" property="videoUrl"/>
+        <result column="thunmbnail_url" jdbcType="VARCHAR" property="thunmbnailUrl"/>
+        <result column="video_state_id" jdbcType="BIGINT" property="videoStateId"/>
+        <result column="view_num" jdbcType="INTEGER" property="viewNum"/>
+        <result column="pp_num" jdbcType="INTEGER" property="ppNum"/>
+        <result column="video_type_id" jdbcType="BIGINT" property="videoTypeId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+
+        <association property="videoState" column="video_state_id"
+                     select="com.hu.video.mapper.TStateMapper.selectByPrimaryKey">
+        </association>
+
+        <association property="user" javaType="com.hu.video.entity.TUser" column="user_id"
+                     select="com.hu.video.mapper.TUserMapper.selectByPrimaryKey">
+        </association>
+
+        <association property="videoType" javaType="com.hu.video.entity.TVideotype" column="video_type_id"
+                     select="com.hu.video.mapper.TVideotypeMapper.selectByPrimaryKey">
+        </association>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        video_id
+        , video_title, video_info, edit_date, video_url, thunmbnail_url, video_state_id,
+    view_num, pp_num, video_type_id, user_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_video
+        where video_id = #{videoId,jdbcType=BIGINT}
+    </select>
+    <select id="selectOneByVideoId" resultMap="videoresultplus">
+        select *
+        from t_video
+        where video_id = #{videoId}
+    </select>
+    <!-- 查询出推荐视频，不含自己的视频，按预测值由高到底排序 -->
+    <select id="selectRecommendVideo" resultMap="videoresultplus">
+        SELECT t1.*
+        from t_video as t1
+                 inner join (select video_id
+                             from t_predict
+                             where user_id = #{userId}
+                               and video_id not in (select video_id from t_video where user_id = #{userId})
+                             order by pre_star desc LIMIT 0 , #{pageSize}) as t2 on t1.video_id = t2.video_id;
+    </select>
+    <select id="videoList" resultMap="videoDTO">
+        select *
+        from t_video
+    </select>
+    <select id="underVideoList" resultMap="videoDTO">
+        select *
+        from t_video where video_state_id = 5
+    </select>
+    <select id="getVideoById" resultMap="videoDTO">
+        select *
+        from t_video where video_id = #{id}
+    </select>
+    <select id="getStateList" resultType="com.hu.video.entity.TState">
+        select state_id stateId,state_name stateName from t_state where state_id in (4,5)
+    </select>
+    <select id="getVideoTypeList" resultType="com.hu.video.entity.TVideotype">
+        select videotype_id videotypeId, type_name typeName from t_videotype
+    </select>
+    <select id="queryByVideoTitle" resultMap="videoresultplus">
+        select * from t_video where video_title like concat('%',#{videoTitle}, '%')
+    </select>
+    <select id="getVideoListByUserId" resultMap="videoresultplus">
+        select * from t_video where user_id=#{userId} and video_state_id=#{videoStateId}
+    </select>
+    <select id="getVideoByVideoTypeId" resultMap="videoresultplus">
+        select * from t_video where video_type_id = #{videoTypeId} and video_state_id = 4
+    </select>
+    <select id="getIndexRecommendVideo" resultMap="videoresultplus">
+        SELECT a.* FROM t_video a,t_predict b WHERE a.video_state_id =4 and a.video_id = b.video_id ORDER BY b.pre_star LIMIT 4
+    </select>
+    <select id="getIndexLastVideo" resultMap="videoresultplus">
+        select * from t_video where video_state_id = 4 order by edit_date desc limit 5
+    </select>
+    <select id="getiVideoByTitle" resultMap="videoDTO">
+        select * from t_video where video_title like concat('%',#{videoTitle}, '%')
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_video
+        where video_id = #{videoId,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteByUserId">
+        delete from t_video where user_id = #{id}
+    </delete>
+    <insert id="insert" parameterType="com.hu.video.entity.TVideo">
+        insert into t_video (video_id, video_title, video_info,
+                             edit_date, video_url, thunmbnail_url,
+                             video_state_id, view_num, pp_num,
+                             video_type_id, user_id)
+        values (#{videoId,jdbcType=BIGINT}, #{videoTitle,jdbcType=VARCHAR}, #{videoInfo,jdbcType=VARCHAR},
+                #{editDate,jdbcType=TIMESTAMP}, #{videoUrl,jdbcType=VARCHAR}, #{thunmbnailUrl,jdbcType=VARCHAR},
+                #{videoStateId,jdbcType=BIGINT}, #{viewNum,jdbcType=INTEGER}, #{ppNum,jdbcType=INTEGER},
+                #{videoTypeId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.hu.video.entity.TVideo">
+        insert into t_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="videoId != null">
+                video_id,
+            </if>
+            <if test="videoTitle != null">
+                video_title,
+            </if>
+            <if test="videoInfo != null">
+                video_info,
+            </if>
+            <if test="editDate != null">
+                edit_date,
+            </if>
+            <if test="videoUrl != null">
+                video_url,
+            </if>
+            <if test="thunmbnailUrl != null">
+                thunmbnail_url,
+            </if>
+            <if test="videoStateId != null">
+                video_state_id,
+            </if>
+            <if test="viewNum != null">
+                view_num,
+            </if>
+            <if test="ppNum != null">
+                pp_num,
+            </if>
+            <if test="videoTypeId != null">
+                video_type_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="videoId != null">
+                #{videoId,jdbcType=BIGINT},
+            </if>
+            <if test="videoTitle != null">
+                #{videoTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="videoInfo != null">
+                #{videoInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="editDate != null">
+                #{editDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="videoUrl != null">
+                #{videoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="thunmbnailUrl != null">
+                #{thunmbnailUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="videoStateId != null">
+                #{videoStateId,jdbcType=BIGINT},
+            </if>
+            <if test="viewNum != null">
+                #{viewNum,jdbcType=INTEGER},
+            </if>
+            <if test="ppNum != null">
+                #{ppNum,jdbcType=INTEGER},
+            </if>
+            <if test="videoTypeId != null">
+                #{videoTypeId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <insert id="addVideo">
+        insert into t_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            video_id,
+            <if test="videoTitle != null">
+                video_title,
+            </if>
+            <if test="videoInfo != null">
+                video_info,
+            </if>
+                edit_date,
+            <if test="videoUrl != null">
+                video_url,
+            </if>
+            <if test="thunmbnailUrl != null">
+                thunmbnail_url,
+            </if>
+                video_state_id,
+                view_num,
+                pp_num,
+
+            <if test="videoType != null">
+                video_type_id,
+            </if>
+            <if test="user != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            default ,
+            <if test="videoTitle != null">
+                #{videoTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="videoInfo != null">
+                #{videoInfo,jdbcType=VARCHAR},
+            </if>
+            now(),
+            <if test="videoUrl != null">
+                #{videoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="thunmbnailUrl != null">
+                #{thunmbnailUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="videoState != null">
+                #{videoState.stateId,jdbcType=BIGINT},
+            </if>
+            0,
+            0,
+            <if test="videoType != null">
+                #{videoType.videotypeId,jdbcType=BIGINT},
+            </if>
+            <if test="user != null">
+                #{user.userId}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TVideo">
+        update t_video
+        <set>
+            <if test="videoTitle != null">
+                video_title = #{videoTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="videoInfo != null">
+                video_info = #{videoInfo,jdbcType=VARCHAR},
+            </if>
+            <if test="editDate != null">
+                edit_date = #{editDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="videoUrl != null">
+                video_url = #{videoUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="thunmbnailUrl != null">
+                thunmbnail_url = #{thunmbnailUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="videoStateId != null">
+                video_state_id = #{videoStateId,jdbcType=BIGINT},
+            </if>
+            <if test="viewNum != null">
+                view_num = #{viewNum,jdbcType=INTEGER},
+            </if>
+            <if test="ppNum != null">
+                pp_num = #{ppNum,jdbcType=INTEGER},
+            </if>
+            <if test="videoTypeId != null">
+                video_type_id = #{videoTypeId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where video_id = #{videoId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TVideo">
+        update t_video
+        set video_title    = #{videoTitle,jdbcType=VARCHAR},
+            video_info     = #{videoInfo,jdbcType=VARCHAR},
+            edit_date      = #{editDate,jdbcType=TIMESTAMP},
+            video_url      = #{videoUrl,jdbcType=VARCHAR},
+            thunmbnail_url = #{thunmbnailUrl,jdbcType=VARCHAR},
+            video_state_id = #{videoStateId,jdbcType=BIGINT},
+            view_num       = #{viewNum,jdbcType=INTEGER},
+            pp_num         = #{ppNum,jdbcType=INTEGER},
+            video_type_id  = #{videoTypeId,jdbcType=BIGINT},
+            user_id        = #{userId,jdbcType=BIGINT}
+        where video_id = #{videoId,jdbcType=BIGINT}
+    </update>
+    <update id="updateVideoViewSumByVideoId">
+        UPDATE t_video
+        set view_num = view_num + 1
+        where video_id = #{videoId}
+    </update>
+    <update id="updateVideoPath">
+        update t_video
+        set video_url=#{path}
+        where video_id = #{videoId}
+    </update>
+    <update id="updateVideoImage">
+        update t_video
+        set thunmbnail_url = #{s}
+        where video_id = #{videoId}
+    </update>
+    <update id="rdeleteVideo">
+        update t_video set video_state_id = 5
+        where video_id = #{videoId}
+    </update>
+    <update id="restoreVideo">
+        update t_video set video_state_id = 4
+        where video_id = #{id}
+    </update>
+    <update id="adminUpdateVideoImage">
+        update t_video set thunmbnail_url=#{s}, user_id=1
+        where video_id=#{videoId}
+    </update>
+    <resultMap id="videoDTO" type="com.hu.video.entity.dto.VideoInfoDTO">
+        <id column="video_id" property="videoId"/>
+        <result column="video_title" property="videoTitle"/>
+        <result column="video_info" property="videoInfo"/>
+        <result column="edit_date" property="editDate"/>
+        <result column="video_url" property="videoUrl"/>
+        <result column="thunmbnail_url" property="thumbnailUrl"/>
+        <result column="view_num" property="viewNum"/>
+        <result column="pp_num" property="ppNum"/>
+        <result column="video_type_id" property="videoTypeId"/>
+        <result column="video_state_id" property="videoStateId" />
+
+        <association property="videoState" javaType="com.hu.video.entity.TState" column="video_state_id" select="com.hu.video.mapper.TStateMapper.selectByPrimaryKey" />
+
+        <association property="tUser" javaType="com.hu.video.entity.TUser" column="user_id" select="com.hu.video.mapper.TUserMapper.selectByPrimaryKey" />
+
+        <association property="videoType" javaType="com.hu.video.entity.TVideotype" column="video_type_id" select="com.hu.video.mapper.TVideotypeMapper.selectByPrimaryKey" />
+    </resultMap>
+
+</mapper>

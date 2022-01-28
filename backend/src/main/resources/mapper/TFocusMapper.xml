@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TFocusMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.TFocus">
+    <id column="focus_id" jdbcType="BIGINT" property="focusId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="focused_id" jdbcType="BIGINT" property="focusedId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    focus_id, user_id, focused_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_focus
+    where focus_id = #{focusId,jdbcType=BIGINT}
+  </select>
+    <select id="selectOneVerify" resultType="java.lang.Integer">
+      select count(*)
+      from t_focus
+      where user_id = #{userId} and focused_id = #{focusedId}
+    </select>
+    <select id="selectFocusedsId" resultType="java.lang.Long">
+      select user_id from t_user as u
+      where u.user_id in(
+        SELECT b.focused_id from t_focus as b where b.user_id = #{userId})
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_focus
+    where focus_id = #{focusId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.TFocus">
+    insert into t_focus (focus_id, user_id, focused_id
+      )
+    values (#{focusId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{focusedId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.TFocus">
+    insert into t_focus
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="focusId != null">
+        focus_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="focusedId != null">
+        focused_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="focusId != null">
+        default ,
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="focusedId != null">
+        #{focusedId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TFocus">
+    update t_focus
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="focusedId != null">
+        focused_id = #{focusedId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where focus_id = #{focusId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TFocus">
+    update t_focus
+    set user_id = #{userId,jdbcType=BIGINT},
+      focused_id = #{focusedId,jdbcType=BIGINT}
+    where focus_id = #{focusId,jdbcType=BIGINT}
+  </update>
+</mapper>

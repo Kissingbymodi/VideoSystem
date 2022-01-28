@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>荣光影视</title>
+    <script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+    <link rel="stylesheet" th:href="@{/static/tool4/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/font_1205629_qkvn3s9pbk.css}">
+    <link rel="stylesheet" th:href="@{/static/css/global.css}">
+    <link rel="stylesheet" th:href="@{/static/css/login.css}">
+
+</head>
+<body>
+
+<div class="login-box">
+    <div class="login-container clearfix">
+        <div class="login-left float-left">
+        </div>
+        <div class="login-right float-left">
+            <div class="login-title">
+                <span class="active">登录</span>
+                <a th:href="@{/user/toRegister}" style="color: #2f2f2f;">注册</a>
+            </div>
+            <div class="login-content">
+                <div class="login-item">
+                    <div class="login-item-name">账号</div>
+                    <div class="login-item-ipt">
+                        <input type="text" class="form-control username-ipt" id="tel" placeholder="请输入手机号">
+                    </div>
+                </div>
+                <div class="login-item">
+                    <div class="login-item-name">密码</div>
+                    <div class="login-item-ipt">
+                        <input class="form-control password-ipt" id="password" placeholder="请输入密码" type="password">
+                    </div>
+                </div>
+                <div class="login-item clearfix">
+                    <div class="login-item-name">验证码</div>
+                    <div class="login-item-ipt">
+                        <input type="text" id="captcha" name="a_code" class="form-control verify-ipt"
+                               placeholder="请输入验证码">
+                        <img src="Img" onclick="refresh(this)"/><br>
+                    </div>
+                </div>
+                <div class="login-auto">
+                    <a href="#" style="color: #2f2f2f;">忘记密码?</a>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success btn-block" id="login-btn" type="submit">登&nbsp;&nbsp;录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript">
+    function refresh(element) {
+        /*<![CDATA[*/
+        ctxPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+        //加入随机数的目的为了避免因为缓存机制的原因，导致请求路径相同而页面不刷新的问题
+        var temp = ctxPath + 'user/Img?r=' + Math.random()
+        element.src = temp
+    }
+</script>
+<script th:src="@{/static/layui.js}"></script>
+<script th:src="@{/static/css/layui.css}"></script>
+<script>
+    layui.use(['jquery', 'layer'], function () {
+        var layer = layui.layer
+            , $ = layui.jquery;
+        $('#tel').blur(function (){
+            var tel = $('#tel').val()
+            var reg = /^1[3|4|5|7|8]\d{9}$/
+            if(!reg.test(tel)) {
+                layer.msg("手机号格式有问题")
+                return ;
+            }
+        })
+        $('#login-btn').click(function () {
+            var tel = $('#tel').val()
+            var pwd = $('#password').val()
+            var acode = $('#captcha').val()
+            var obj = {
+                'userTel': tel,
+                'password': pwd,
+                'aCode': acode
+            }
+            $.ajax({
+                url: '/user/userLogin',
+                type: 'post',
+                dataType: "json",
+                data: obj,
+                success: function (data) {
+                    if (data.result) {
+                        layer.msg(data.message,{
+                            icon: 1,
+                            time: 3500
+                        })
+                        window.location.href = "/user/toIndex"
+                    } else {
+                        layer.msg(data.message,{
+                            icon: 2,
+                            time: 3000
+                        })
+                    }
+                }
+            })
+        })
+    })
+</script>
+</body>
+</html>

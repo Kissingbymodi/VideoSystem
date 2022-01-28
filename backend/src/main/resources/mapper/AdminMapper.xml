@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.AdminMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.Admin">
+    <id column="a_id" jdbcType="BIGINT" property="aId" />
+    <result column="a_username" jdbcType="VARCHAR" property="aUsername" />
+    <result column="a_password" jdbcType="VARCHAR" property="aPassword" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    a_id, a_username, a_password
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin
+    where a_id = #{aId,jdbcType=BIGINT}
+  </select>
+    <select id="login" resultMap="BaseResultMap">
+      select * from admin where a_username=#{aUsername} and a_password=#{aPassword}
+    </select>
+    <select id="getFilmData" resultType="java.lang.String">
+      SELECT video_title FROM `t_video` a,t_predict b where a.video_id = b.video_id ORDER BY b.pre_star desc limit 7
+    </select>
+  <select id="getData" resultType="java.lang.Integer">
+    select view_num from t_video a,t_predict b where a.video_id = b.video_id ORDER BY b.pre_star desc limit 7
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from admin
+    where a_id = #{aId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.Admin">
+    insert into admin (a_id, a_username, a_password
+      )
+    values (#{aId,jdbcType=BIGINT}, #{aUsername,jdbcType=VARCHAR}, #{aPassword,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.Admin">
+    insert into admin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="aId != null">
+        a_id,
+      </if>
+      <if test="aUsername != null">
+        a_username,
+      </if>
+      <if test="aPassword != null">
+        a_password,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="aId != null">
+        #{aId,jdbcType=BIGINT},
+      </if>
+      <if test="aUsername != null">
+        #{aUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="aPassword != null">
+        #{aPassword,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.Admin">
+    update admin
+    <set>
+      <if test="aUsername != null">
+        a_username = #{aUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="aPassword != null">
+        a_password = #{aPassword,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where a_id = #{aId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.Admin">
+    update admin
+    set a_username = #{aUsername,jdbcType=VARCHAR},
+      a_password = #{aPassword,jdbcType=VARCHAR}
+    where a_id = #{aId,jdbcType=BIGINT}
+  </update>
+</mapper>

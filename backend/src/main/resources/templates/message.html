@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>荣光影视</title>
+
+    <link rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style-starter.css}">
+    <script th:src="@{/static/layui.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/static/css/xcConfirm.css}"/>
+    <link rel="stylesheet" th:href="@{/static/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/static/css/message.css}">
+
+</head>
+
+<body>
+
+<!-- header -->
+<header id="site-header" class="w3l-header fixed-top">
+    <!--/nav-->
+    <nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-3">
+        <div class="container">
+            <h1>
+                <a class="navbar-brand" href="#">
+                    荣光影视 </a>
+            </h1>
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <!-- <span class="navbar-toggler-icon"></span> -->
+                <span class="fa icon-expand fa-bars"></span>
+                <span class="fa icon-close fa-times"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{/user/toIndex}">主页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">关于我们</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">联系我们</a>
+                    </li>
+                </ul>
+
+                <!--/search-right-->
+                <!--/search-right-->
+                <div class="search-right">
+                    <a href="#search" class="btn search-hny mr-lg-3 mt-lg-0 mt-4" title="search">搜索<span
+                            class="fa fa-search ml-3" aria-hidden="true"></span></a>
+                    <!-- search popup -->
+                    <div id="search" class="pop-overlay">
+                        <div class="popup">
+                            <form th:action="@{/video/search}" method="post" class="search-box">
+                                <input type="search" placeholder="Search your Keyword" name="videoTitle"
+                                       required="required" autofocus="">
+                                <button type="submit" class="btn"><span class="fa fa-search"
+                                                                        aria-hidden="true"></span></button>
+                            </form>
+                            <div class="browse-items">
+                                <h3 class="hny-title two mt-md-5 mt-4">荣光影视搜索</h3>
+                                <ul class="search-items">
+                                    <li><a href="#">影视</a></li>
+                                    <li><a href="#">新闻</a></li>
+                                    <li><a href="#">生活</a></li>
+                                    <li><a href="#">美食</a></li>
+                                    <li><a href="#">音乐</a></li>
+                                    <li><a href="#">电视剧</a></li>
+                                    <li><a href="#">舞蹈</a></li>
+                                    <li><a href="#">动漫</a></li>
+                                    <li><a href="#">娱乐</a></li>
+                                    <li><a href="#">科技数码</a></li>
+                                    <li><a href="#">体育</a></li>
+                                    <li><a href="#">美妆</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <a class="close" href="#close">×</a>
+                    </div>
+                    <!-- /search popup -->
+                    <!--/search-right-->
+                </div>
+
+
+            </div>
+            <!-- toggle switch for light and dark theme -->
+            <div class="mobile-position">
+                <nav class="navigation">
+                    <div class="theme-switch-wrapper">
+                        <label class="theme-switch" for="checkbox">
+                            <input type="checkbox" id="checkbox">
+                            <div class="mode-container">
+                                <i class="gg-sun"></i>
+                                <i class="gg-moon"></i>
+                            </div>
+                        </label>
+                    </div>
+                </nav>
+            </div>
+            <!-- //toggle switch for light and dark theme -->
+            <!--<button type="button" class="btn btn-primary btn-lg active">登录</button>-->
+            <div th:unless="${session.user}">
+                <a th:href="@{/user/toLogin}" class="btn btn-primary btn-lg"
+                   style="height: 38px;font-size: 14px;">登录</a>
+            </div>
+            <div th:if="${session.user}">
+                <button class="layui-btn layui-btn-primary" id="demo4">
+                    <span th:text="${session.user.userName}"></span>
+                    <i class="layui-icon layui-icon-more-vertical layui-font-12">
+                    </i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!--//nav-->
+</header>
+<!-- //header -->
+<section style="margin-top: 100px;">
+    <div style="margin-left: 200px;">
+        <h2>消息中心</h2>
+    </div>
+    <div class="container">
+        <div id="allMsgPage"></div>
+    </div>
+</section>
+</body>
+
+</html>
+<script th:src="@{/static/js/jquery.min.js}"></script>
+<script th:src="@{/static/js/xcConfirm.js}" type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/static/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/js/message.js}"></script>
+<!-- responsive tabs -->
+<script>
+
+    layui.use(['upload', 'element', 'form', 'dropdown', 'util', 'layer'], function () {
+        /*<![CDATA[*/
+        var ctxPath = /*[[@{/}]]*/ '';
+        /*]]>*/
+        var dropdown = layui.dropdown
+            , util = layui.util
+            , layer = layui.layer
+            , form = layui.form
+            , element = layui.element
+            , upload = layui.upload
+            , $ = layui.jquery;
+        form.on('submit(formDemo)', function (data) {
+            layer.msg(JSON.stringify(data.field));
+        });
+
+        dropdown.render({
+            elem: '#demo4'
+            , trigger: 'hover'
+            , data: [
+                {
+                    title: '个人中心'
+                    , href: '/user/toUEditorUser'
+                    , id: 100
+                }, {
+                    title: "消息中心"
+                    , href: '/user/toMessage'
+                    , id: 101
+                }, {
+                    title: '视频中心'
+                    ,href: '/video/toVideoCenter'
+                    , id: 101
+                }, {
+                    title: '视频上传'
+                    ,href: '/video/toAddVideo'
+                    , id: 102
+                }, {
+                    title: '退出'
+                    ,href: '/user/logout'
+                    , id: 103
+                }
+            ]
+        });
+    })
+</script>
+<script th:src="@{/static/js/easyResponsiveTabs.js}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //Horizontal Tab
+        $('#parentHorizontalTab').easyResponsiveTabs({
+            type: 'default', //Types: default, vertical, accordion
+            width: 'auto', //auto or any width like 600px
+            fit: true, // 100% fit in a container
+            tabidentify: 'hor_1', // The tab groups identifier
+            activate: function (event) { // Callback function if tab is switched
+                var $tab = $(this);
+                var $info = $('#nested-tabInfo');
+                var $name = $('span', $info);
+                $name.text($tab.text());
+                $info.show();
+            }
+        });
+    });
+</script>
+<!-- //responsive tabs -->
+<!--/theme-change-->
+<script th:src="@{/static/js/theme-change.js}"></script>
+<!-- //theme-change-->
+<!-- script for owlcarousel -->
+<!-- Template JavaScript -->
+<script th:src="@{/static/js/jquery.magnific-popup.min.js}"></script>
+
+
+

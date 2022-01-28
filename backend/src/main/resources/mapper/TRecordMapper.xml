@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TRecordMapper">
+    <resultMap id="BaseResultMap" type="com.hu.video.entity.TRecord">
+        <id column="record_id" jdbcType="BIGINT" property="recordId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="video_id" jdbcType="BIGINT" property="videoId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        record_id
+        , user_id, video_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_record
+        where record_id = #{recordId,jdbcType=BIGINT}
+    </select>
+    <select id="selectOne" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_record where video_id = #{videoId} and user_id = #{userId}
+    </select>
+
+    <select id="getRecordAll" resultMap="videoResultPlus">
+        SELECT * from t_video v
+        where v.video_id in (
+            SELECT r.video_id from t_record r
+            where r.user_id = #{userId}
+        ) and v.video_state_id = 4
+        GROUP BY v.edit_date DESC
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from t_record
+        where record_id = #{recordId,jdbcType=BIGINT}
+    </delete>
+    <delete id="deleteRecordByVideoId">
+        delete from t_record where user_id=#{userId} and video_id=#{videoId}
+    </delete>
+    <delete id="deleteByUserId">
+        delete from t_record where user_id = #{id}
+    </delete>
+    <insert id="insert" parameterType="com.hu.video.entity.TRecord">
+        insert into t_record (record_id, user_id, video_id)
+        values (#{recordId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{videoId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.hu.video.entity.TRecord">
+        insert into t_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                record_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="videoId != null">
+                video_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordId != null">
+                #{recordId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="videoId != null">
+                #{videoId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertOne">
+        insert into t_record(user_id,video_id) values(#{userId},#{videoId});
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TRecord">
+        update t_record
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="videoId != null">
+                video_id = #{videoId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where record_id = #{recordId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TRecord">
+        update t_record
+        set user_id  = #{userId,jdbcType=BIGINT},
+            video_id = #{videoId,jdbcType=BIGINT}
+        where record_id = #{recordId,jdbcType=BIGINT}
+    </update>
+
+    <resultMap id="videoResultPlus" type="com.hu.video.entity.TVideo">
+        <id column="video_id" property="videoId" />
+        <result column="video_title" property="videoTitle" />
+        <result column="video_info" property="videoInfo" />
+        <result column="edit_date" property="editDate" />
+        <result column="video_url" property="videoUrl" />
+        <result column="thunmbnail_url" property="thunmbnailUrl" />
+        <result column="view_num" property="viewNum" />
+        <result column="pp_num" property="ppNum" />
+
+        <association property="videoState" javaType="com.hu.video.entity.TState" column="video_state_id" select="com.hu.video.mapper.TStateMapper.selectByPrimaryKey" />
+        <association property="user" javaType="com.hu.video.entity.TUser" column="user_id" select="com.hu.video.mapper.TUserMapper.selectByPrimaryKey" />
+        <association property="videoType" javaType="com.hu.video.entity.TVideotype" column="videotype_id" select="com.hu.video.mapper.TVideotypeMapper.selectByPrimaryKey" />
+    </resultMap>
+</mapper>

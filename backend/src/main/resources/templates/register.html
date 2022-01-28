@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>荣光影视</title>
+    <link rel="stylesheet" th:href="@{/static/tool4/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/font_1205629_qkvn3s9pbk.css}">
+    <link rel="stylesheet" th:href="@{/static/css/global.css}">
+
+</head>
+
+<body>
+
+<div class="login-box">
+    <div class="login-container clearfix">
+        <div class="login-left float-left">
+        </div>
+        <div class="login-right float-left">
+            <div class="login-title">
+                <a th:href="@{/user/toLogin}" style="color: #2f2f2f;">登录</a>
+                <span class="active">注册</span>
+            </div>
+            <div class="login-content">
+                <div class="login-item">
+                    <div class="login-item-name">手机号<span class="login-ntf name"></span></div>
+                    <div class="login-item-ipt">
+                        <input type="text" class="form-control username-ipt" placeholder="请输入手机号" id="tel">
+                    </div>
+                </div>
+                <div class="login-item">
+                    <div class="login-item-name">设置密码<span class="login-ntf password"></span></div>
+                    <div class="login-item-ipt">
+                        <input type="password" id="pwd" class="form-control password-ipt" placeholder="请设置密码">
+                    </div>
+                </div>
+                <div class="login-item">
+                    <div class="login-item-name">确认密码<span class="login-ntf password-check"></span></div>
+                    <div class="login-item-ipt">
+                        <input type="password" id="check-password" class="form-control check-password-ipt"
+                               placeholder="请确认密码">
+                    </div>
+                </div>
+                <div class="login-item">
+                    <div class="login-item-name">输入密保<span class="login-ntf name"></span></div>
+                    <div class="login-item-ipt">
+                        <input type="text" id='cproblem' class="form-control username-ipt" placeholder="请输入你最喜欢的书是什么?">
+                    </div>
+                </div>
+                <div style="margin: 10px 0 10px 4px;">
+                    <input type="checkbox" id="read-info">
+                    <label for="read-info">我已阅读</label>
+                    <a href="javascript: void(0)" id="serviceRule">《荣光影视在线协议》</a>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-success btn-block" id="submit" type="submit">注&nbsp;&nbsp;册</button>
+                </div>
+
+            </div>
+            <div class="modal fade" id="serviceRuleModal" tabindex="-1" role="dialog" aria-labelledby="submitModalLabel"
+                 aria-hidden="true" data-backdrop="static">
+                <div class="modal-dialog modal-dialog-centered " role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="submitModalLabel">《荣光影视在线服务协议》</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="max-height: 60vh; overflow: auto;">
+                            <div>aaa</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="serviceRuleModalBtn"
+                                    style="width: 120px;">确定
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/static/layui.js}"></script>
+<script th:src="@{/static/css/layui.css}"></script>
+<script>
+    layui.use(['jquery', 'layer'], function () {
+        var layer = layui.layer
+            , $ = layui.jquery
+        $('#check-password').blur(function () {
+            var t = $('#check-password').val()
+            if (t != '' && t != undefined && t != null) {
+                var re = $('#pwd').val()
+                if (t != re) {
+                    layer.msg('前后密码不一致')
+                }
+            }
+        })
+        $('#tel').blur(function () {
+            var tel = $('#tel').val()
+            $.ajax({
+                url: '/user/checkTel',
+                type: 'post',
+                dataType: "json",
+                data: {'userTel': tel},
+                success: function (data) {
+                    if (data.res) {
+                        layer.msg('可以注册')
+                    } else {
+                        layer.msg('该手机号已存在')
+                    }
+                }
+            })
+        })
+        $('#submit').click(function () {
+            var tel = $('#tel').val();
+            var pwd = $('#pwd').val();
+            var repwd = $('#check-password').val();
+            if (repwd != '' && repwd != undefined && repwd != null) {
+                if (pwd != repwd) {
+                    layer.msg('前后密码不一致')
+                    return;
+                }
+            }
+            var cproblem = $('#cproblem').val();
+            var obj = {
+                'userTel': tel,
+                'password': pwd,
+                'encryptedProblem': cproblem,
+                'userName': '请填入你的昵称',
+            }
+            $.ajax({
+                url: '/user/userRegister',
+                type: 'post',
+                dataType: "json",
+                data: obj,
+                success: function (data) {
+                    if (data.result) {
+                        layer.msg(data.message,{
+                            icon: 1,
+                            time: 3500
+                        })
+                        window.location.href = "/user/toLogin"
+                    } else {
+                        layer.msg(data.message,{
+                            icon: 1,
+                            time: 3000
+                        })
+                    }
+                }
+            })
+
+        })
+    })
+</script>
+</html>

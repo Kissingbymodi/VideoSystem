@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hu.video.mapper.CommentedStarMapper">
+    <resultMap id="base_Column" type="com.hu.video.entity.vo.CommentedStar">
+        <id column="commentedstar_id" property="commentedStarId" />
+        <result column="user_id" property="userId" />
+        <result column="video_id" property="videoId" />
+        <result column="star_num" property="starNum" />
+        <result column="comment_date" property="commentDate" />
+    </resultMap>
+    <insert id="insertOne">
+        insert into t_commentedstar (user_id, video_id, star_num, comment_date)
+        values (#{userId}, #{videoId}, #{starNum}, now());
+    </insert>
+    <select id="getCommentedStar" resultMap="base_Column">
+        select *
+        from t_commentedstar
+        where user_id = #{userId} and video_id = #{videoId}
+    </select>
+</mapper>

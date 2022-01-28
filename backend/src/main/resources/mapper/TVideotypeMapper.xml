@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hu.video.mapper.TVideotypeMapper">
+  <resultMap id="BaseResultMap" type="com.hu.video.entity.TVideotype">
+    <id column="videotype_id" jdbcType="BIGINT" property="videotypeId" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    videotype_id, type_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_videotype
+    where videotype_id = #{videotypeId,jdbcType=BIGINT}
+  </select>
+
+    <select id="getVideoTypeAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_videotype
+    </select>
+  <select id="getVideoTypeByTypeName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_videotype where type_name = #{typeName}
+  </select>
+  <select id="getVideoTypeByName" resultMap="BaseResultMap">
+    select * from t_videotype where type_name like concat('%',#{typeName},'%')
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from t_videotype
+    where videotype_id = #{videotypeId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.hu.video.entity.TVideotype">
+    insert into t_videotype (videotype_id, type_name)
+    values (#{videotypeId,jdbcType=BIGINT}, #{typeName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hu.video.entity.TVideotype">
+    insert into t_videotype
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="videotypeId != null">
+        videotype_id,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="videotypeId != null">
+        #{videotypeId,jdbcType=BIGINT},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hu.video.entity.TVideotype">
+    update t_videotype
+    <set>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where videotype_id = #{videotypeId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hu.video.entity.TVideotype">
+    update t_videotype
+    set type_name = #{typeName,jdbcType=VARCHAR}
+    where videotype_id = #{videotypeId,jdbcType=BIGINT}
+  </update>
+</mapper>
