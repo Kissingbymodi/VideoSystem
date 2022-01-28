@@ -96,13 +96,13 @@ export default {
           'stateName': '认证中'
         },
         'userId': 1,
-        'userName': 'hujian',
+        'userName': 'yourname',
         'userAge': 123456,
         'userSex': '男',
         'password': '123456',
         'encryptedProblem': '123',
         'fanNum': null,
-        'userTel': '15566266626',
+        'userTel': '15566666626',
         'registerDate': '2021-04-02T07:17:10.000+0000',
         'iconUrl': null,
         'stateId': 1
