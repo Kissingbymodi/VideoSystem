@@ -95,13 +95,13 @@ export default {
           'editDate': '2021-04-26T11:59:12.000+0000',
           'tUser': {
             'userId': 1,
-            'userName': 'hujian',
+            'userName': 'yourname',
             'userAge': 22,
             'userSex': '男',
             'password': '123456',
             'encryptedProblem': '123',
             'fanNum': 0,
-            'userTel': '15566266626',
+            'userTel': '15566666626',
             'registerDate': '2021-04-17 15:17:10',
             'iconUrl': '/user/getIcon/icon1.png',
             'stateId': 1
